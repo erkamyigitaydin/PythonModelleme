@@ -16,7 +16,7 @@ def image_preprocess(image_path):
 
 def extract_text_from_image(image_path):
     image = image_preprocess(image_path)
-    text = pytesseract.image_to_string(image, lang="tur")
+    text = pytesseract.image_to_string(image, lang="tur"+"eng")
     return text
 
 
@@ -25,7 +25,7 @@ def extract_info_from_slip(image_path):
 
     processed = image_preprocess(image_path)
     
-    text = pytesseract.image_to_string(processed, lang="tur")
+    text = pytesseract.image_to_string(processed, lang="tur"+"eng")
    
     # İşyeri No
     isyeri_no = None
@@ -64,6 +64,7 @@ def extract_info_from_slip(image_path):
     adres = " ".join(adres_satirlari)
     
     return {
+        "sonuc": text,
         "isyeri_no": isyeri_no,
         "terminal_no": terminal_no,
         "tutar": tutar,
