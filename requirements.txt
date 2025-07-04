@@ -1,6 +1,7 @@
 pytesseract==0.3.13
 pillow==11.3.0
 opencv-python==4.11.0.86
-label-studio
-PyYAML>=6.0
-ultralytics>=8.0.0
+label-studio==1.15.0
+PyYAML==6.0.1
+ultralytics==8.2.2
+numpy==1.26.4

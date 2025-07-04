@@ -1,4 +1,4 @@
-#!/Users/erkamaydin/Desktop/Python/myocr/env/bin/python
+#!/Users/erkamaydin/Desktop/Python/myocr/env/bin/python3
 from boto.manage.server import Server
 if __name__ == "__main__":
     from optparse import OptionParser

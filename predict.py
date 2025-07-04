@@ -3,7 +3,6 @@ import argparse
 from ultralytics import YOLO
 import json
 
-# Sınıf isimlerini ve OCR fonksiyonunu YENİ PAKETTEN import et
 from myocr_lib import id_to_class, extract_text_from_box
 
 def predict_and_extract(image_path, model_path='runs/detect/train/weights/best.pt'):
@@ -60,7 +59,6 @@ def predict_and_extract(image_path, model_path='runs/detect/train/weights/best.p
     original_image_for_ocr = cv2.imread(image_path)
     
     for detection in detections:
-        # YENİ: core.py'deki gelişmiş fonksiyonu kullan
         text = extract_text_from_box(original_image_for_ocr, detection['coordinates'])
         
         # Aynı sınıftan birden fazla tespit varsa listeye ekle
