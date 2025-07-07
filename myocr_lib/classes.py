@@ -1,4 +1,4 @@
-# Updated class list with English field names in correct order
+
 classes = [
     "company_name",
     "address",

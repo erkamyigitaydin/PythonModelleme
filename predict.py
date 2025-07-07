@@ -1,34 +1,9 @@
 import cv2
 import argparse
 from ultralytics import YOLO
-from PIL import Image
 import json
-import pytesseract
 
-# Sınıf isimlerini ID'ye göre map'lemek için
-from classes import id_to_class
-
-def perform_ocr_on_box(image, box_coords):
-    """
-    Belirtilen koordinatlardaki kutucuk üzerinde Tesseract OCR uygular.
-    """
-    x1, y1, x2, y2 = map(int, box_coords)
-    cropped_image = image[y1:y2, x1:x2]
-    
-    # Görüntüyü Tesseract'a göndermeden önce ön işleme
-    gray_image = cv2.cvtColor(cropped_image, cv2.COLOR_BGR2GRAY)
-    # Daha iyi sonuçlar için thresholding veya diğer teknikler eklenebilir
-    
-    try:
-        # Pytesseract'ı doğrudan PIL Image ile kullanmak genellikle daha stabildir
-        pil_img = Image.fromarray(gray_image)
-        # Türkçe ve İngilizce dillerini kullan
-        text = pytesseract.image_to_string(pil_img, lang="tur+eng")
-        return text.strip()
-    except Exception as e:
-        # Diğer OCR hatalarını yakala
-        print(f"OCR hatası: {e}")
-        return ""
+from myocr_lib import id_to_class, extract_text_from_box
 
 def predict_and_extract(image_path, model_path='runs/detect/train/weights/best.pt'):
     """
@@ -84,8 +59,7 @@ def predict_and_extract(image_path, model_path='runs/detect/train/weights/best.p
     original_image_for_ocr = cv2.imread(image_path)
     
     for detection in detections:
-        # OCR uygula
-        text = perform_ocr_on_box(original_image_for_ocr, detection['coordinates'])
+        text = extract_text_from_box(original_image_for_ocr, detection['coordinates'])
         
         # Aynı sınıftan birden fazla tespit varsa listeye ekle
         if detection['class_name'] in extracted_data:
