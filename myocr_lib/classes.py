@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+# MyOCR Sınıf Tanımları
+=======
 
+>>>>>>> main
 classes = [
     "company_name",
     "address",
@@ -17,7 +21,11 @@ classes = [
 
 # Class index mapping for YOLO
 class_to_id = {class_name: idx for idx, class_name in enumerate(classes)}
+<<<<<<< HEAD
+id_to_class = {idx: class_name for idx, class_name in enumerate(classes)} 
+=======
 id_to_class = {idx: class_name for idx, class_name in enumerate(classes)}
 
 print("Classes:", classes)
 print("Total classes:", len(classes)) 
+>>>>>>> main
