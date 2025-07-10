@@ -1,0 +1,35 @@
+<View>
+  <View style="padding: 25px">
+    <Header value="OCR Fiş Etiketleme"/>
+    <Text name="filename" value="$filename"/>
+  </View>
+
+  <Image name="image" value="$image" zoom="true" zoomBy="1.5"/>
+
+  <RectangleLabels name="label" toName="image">
+    <Label value="company_name" background="red"/>
+    <Label value="address" background="orange"/>
+    <Label value="tax_office" background="yellow"/>
+    <Label value="tax_number" background="green"/>
+    <Label value="date" background="blue"/>
+    <Label value="time" background="purple"/>
+    <Label value="category" background="pink"/>
+    <Label value="tax_amount" background="brown"/>
+    <Label value="total_amount" background="darkred"/>
+    <Label value="payment_method" background="darkgreen"/>
+    <Label value="merchant_number" background="darkblue"/>
+    <Label value="receipt_number" background="darkorange"/>
+    <Label value="currency" background="darkviolet"/>
+  </RectangleLabels>
+
+  <!-- Text transcription field - her bölge için metin girişi -->
+  <TextArea name="transcription" toName="image" 
+            editable="true" 
+            perRegion="true" 
+            required="false"
+            maxSubmissions="1" 
+            rows="3" 
+            placeholder="Bu alanda ne yazıyor? (opsiyonel)" 
+            displayMode="region-list"/>
+            
+</View> 
