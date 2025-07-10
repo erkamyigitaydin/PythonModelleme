@@ -15,3 +15,9 @@ dataset/
 
 # Label Studio exports
 *.json
+
+# Virtual environment dosyaları
+env/
+
+# Eski/archive dosyalar
+archive/
