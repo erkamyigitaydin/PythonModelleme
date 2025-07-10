@@ -1,0 +1,17 @@
+# Virtual environment
+env/
+
+# YOLO training outputs
+runs/
+
+# Dataset
+dataset/
+
+# Model files
+*.pt
+
+# macOS
+.DS_Store
+
+# Label Studio exports
+*.json
