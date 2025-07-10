@@ -1,0 +1,130 @@
+# =============================================================================
+# MyOCR Production .gitignore - Prevents large files from going to Git
+# =============================================================================
+
+# Virtual Environment (1.5GB)
+env/
+venv/
+.venv/
+
+# =============================================================================
+# DATASETS - Large image/annotation files should not be in Git
+# =============================================================================
+
+# Main datasets (8.9MB + 26MB = ~35MB total)
+dataset/
+enhanced_dataset/
+
+# Archive directories (legacy data)
+archive/
+
+# Backup systems
+export_backups/
+dataset_backup_*/
+
+# Cache files from YOLO/training
+*.cache
+labels.cache
+
+# =============================================================================
+# TRAINING OUTPUTS - Models and logs are too large for Git
+# =============================================================================
+
+# YOLO training outputs (1.5GB)
+runs/
+
+# Model files (.pt files can be 50-100MB each)
+*.pt
+*.pth
+*.onnx
+*.weights
+
+# Training logs and metrics
+training_logs/
+validation_results/
+batch_validation_results.json
+
+# =============================================================================
+# TEMPORARY & PROCESSING FILES
+# =============================================================================
+
+# Duplicate detection system
+image_hashes.json
+duplicate_log.json
+
+# Processing temporary files
+temp_images/
+temp_processing/
+*.tmp
+*.temp
+
+# Label Studio integration
+label_studio_temp/
+upload_temp/
+
+# =============================================================================
+# SYSTEM & DEVELOPMENT FILES
+# =============================================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =============================================================================
+# LOG & OUTPUT FILES
+# =============================================================================
+
+# Application logs
+*.log
+*.out
+error.txt
+debug.txt
+
+# JSON exports/imports (can be large)
+*.json
+!label_studio_config.xml
+!updated_label_studio_config.xml
+!data.yaml
+
+# OCR output files
+ocr_results/
+prediction_outputs/
+
+# =============================================================================
+# JUPYTER & ANALYSIS
+# =============================================================================
+
+# Jupyter notebooks checkpoints
+.ipynb_checkpoints/
+
+# Analysis outputs
+analysis_results/
+performance_reports/
+
+# =============================================================================
+# OPTIONAL: Keep small essential configs
+# =============================================================================
+
+# Allow essential small config files
+!requirements.txt
+!README.md
+!*.py
+!*.md
+!*.yaml
+!*.yml
+!*.xml
