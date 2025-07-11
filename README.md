@@ -1,6 +1,6 @@
 # MyOCR - Gelişmiş OCR Sistemi
 
-Bu proje, **YOLO object detection** ve **OCR text extraction** teknolojilerini birleştiren gelişmiş bir Optical Character Recognition (OCR) sistemidir. Özellikle Türkçe fiş, fatura ve belge analizi için optimize edilmiştir.
+Bu proje, fiş/fatura gibi belgelerdeki kritik bilgileri yüksek doğrulukla otomatik olarak çıkartmak için geliştirilmiştir. YOLO tabanlı bölge tespiti ile OCR sonuçlarının doğruluğu artırılmıştır. **YOLO object detection** ve **OCR text extraction** teknolojilerini birleştiren gelişmiş bir Optical Character Recognition (OCR) sistemidir. Özellikle Türkçe fiş, fatura ve belge analizi için optimize edilmiştir.
 
 ## 🎯 Özellikler
 
