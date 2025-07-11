@@ -1,6 +1,7 @@
 # Virtual environment
 env/
-
+archive/
+enhanced_dataset/
 # YOLO training outputs
 runs/
 
@@ -15,9 +16,3 @@ dataset/
 
 # Label Studio exports
 *.json
-
-# Virtual environment dosyaları
-env/
-
-# Eski/archive dosyalar
-archive/
