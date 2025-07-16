@@ -1,8 +1,4 @@
 #!/usr/bin/env python3
-"""
-Enhanced OCR Prediction Script
-YOLO detection + OCR text extraction + Ground truth validation
-"""
 
 import json
 import sys

@@ -1,0 +1,9 @@
+flask==3.0.3
+werkzeug==3.0.4
+Pillow==11.3.0
+opencv-python==4.11.0.86
+numpy==1.26.4
+
+# Ana MyOCR bağımlılıkları
+pytesseract==0.3.13
+ultralytics==8.2.2 

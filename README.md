@@ -102,7 +102,27 @@ brew install tesseract tesseract-lang
 
 ## 🚀 Kullanım
 
-### 1. Tek Görüntü Analizi
+### 1. Web Arayüzü (Önerilen)
+
+En kolay kullanım şekli web arayüzüdür:
+
+```bash
+# Web uygulamasını başlat
+cd myocr_web
+./start_web_app.sh
+
+# Tarayıcıda açın: http://localhost:5000
+```
+
+**Web Arayüzü Özellikleri:**
+- 🖱️ Drag & drop ile dosya yükleme
+- 🎛️ Canlı confidence threshold ayarı
+- 🎯 Görsel üzerinde tespit edilen alanları gösterme
+- 📊 Detaylı analiz sonuçları ve istatistikler
+- 📱 Responsive tasarım (mobil uyumlu)
+- 🔄 Gerçek zamanlı sonuç güncelleme
+
+### 2. Komut Satırı Kullanımı
 
 ```bash
 # Basit analiz
@@ -133,7 +153,7 @@ python predict.py resim.jpg 0.25 --validate
      📝 Text: '03.07.2025'
 ```
 
-### 2. Batch Processing
+### 3. Batch Processing
 
 ```bash
 # Tüm klasörü analiz et
@@ -143,7 +163,7 @@ python predict.py --batch enhanced_dataset/images
 python predict.py --batch enhanced_dataset/images 0.25 10
 ```
 
-### 3. Model Eğitimi
+### 4. Model Eğitimi
 
 ```bash
 # Enhanced training (OCR accuracy ile)
@@ -153,7 +173,7 @@ python train_model.py --dataset dataset/data.yaml --epochs 50
 yolo detect train data=dataset/data.yaml model=yolov8s.pt epochs=50 imgsz=640 batch=16
 ```
 
-### 4. Label Studio ML Backend
+### 5. Label Studio ML Backend
 
 ```bash
 # ML Backend'i başlat
@@ -279,6 +299,17 @@ myocr/
 │   ├── __init__.py              # API exports
 │   ├── core.py                  # OCR core functions
 │   └── classes.py               # Sınıf tanımları
+├── myocr_web/                   # Web Uygulaması (Ayrı Modül)
+│   ├── web_app.py              # Flask uygulaması
+│   ├── templates/              # HTML şablonları
+│   │   └── index.html         # Ana sayfa
+│   ├── static/                 # Statik dosyalar
+│   │   ├── uploads/           # Yüklenen dosyalar
+│   │   ├── css/               # CSS dosyaları
+│   │   └── js/                # JavaScript dosyaları
+│   ├── requirements.txt        # Web app bağımlılıkları
+│   ├── start_web_app.sh       # Web uygulaması başlatma
+│   └── README.md              # Web app dokümantasyonu
 ├── label_studio_ml/             # Label Studio ML Backend
 │   ├── model.py                 # ML model sınıfı
 │   ├── server.py                # Flask server
@@ -297,7 +328,7 @@ myocr/
 ├── test_ml_backend.py           # ML backend test
 ├── start_ml_backend.sh          # ML backend başlatma
 ├── run_dataset_creation.sh      # Dataset oluşturma
-└── requirements.txt             # Python bağımlılıkları
+└── requirements.txt             # Ana proje bağımlılıkları
 ```
 
 ## 🔧 Konfigürasyon
@@ -359,6 +390,11 @@ python -m pytest tests/ -v
 
 ### Manuel Test
 ```bash
+# Web uygulaması test
+cd myocr_web
+./start_web_app.sh
+# Tarayıcıda http://localhost:5000 açın ve fiş yükleyin
+
 # Tek görüntü test
 python predict.py test_images/sample.jpg 0.25 --validate
 

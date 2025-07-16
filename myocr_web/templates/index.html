@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyOCR - Fiş & Fatura Analizi</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --light-bg: #f8f9fa;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .main-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin: 20px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .upload-section {
+            padding: 40px;
+            text-align: center;
+            background: var(--light-bg);
+        }
+
+        .upload-area {
+            border: 3px dashed #ddd;
+            border-radius: 15px;
+            padding: 60px 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: white;
+        }
+
+        .upload-area:hover, .upload-area.drag-over {
+            border-color: var(--primary-color);
+            background: #f0f8ff;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            color: #ddd;
+            margin-bottom: 20px;
+            transition: color 0.3s;
+        }
+
+        .upload-area:hover .upload-icon {
+            color: var(--primary-color);
+        }
+
+        .preview-section {
+            display: none;
+            padding: 40px;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .results-section {
+            display: none;
+            padding: 40px;
+            background: var(--light-bg);
+        }
+
+        .detection-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--primary-color);
+            transition: transform 0.2s;
+        }
+
+        .detection-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .field-name {
+            font-weight: 600;
+            color: var(--secondary-color);
+            font-size: 1.1rem;
+        }
+
+        .field-value {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-family: monospace;
+            border: 1px solid #e9ecef;
+        }
+
+        .confidence-badge {
+            background: var(--success-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            float: right;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .summary-stat {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .summary-stat .number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: block;
+        }
+
+        .summary-stat .label {
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .annotated-image {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .btn-custom {
+            background: linear-gradient(135deg, var(--primary-color), #5dade2);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            color: white;
+        }
+
+        .controls-section {
+            padding: 20px 40px;
+            background: white;
+            border-top: 1px solid #eee;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                margin: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .upload-section, .preview-section, .results-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <h4>Fiş Analiz Ediliyor...</h4>
+            <p>Bu işlem birkaç saniye sürebilir</p>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="main-container">
+            <!-- Header -->
+            <div class="header">
+                <h1><i class="fas fa-receipt"></i> MyOCR</h1>
+                <p>Fiş & Fatura Analizi - Yapay Zeka Destekli OCR Sistemi</p>
+            </div>
+
+            <!-- Controls -->
+            <div class="controls-section">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <label for="confidenceSlider" class="form-label">
+                            <i class="fas fa-sliders-h"></i> Tespit Hassasiyeti: 
+                            <span id="confidenceValue" class="badge bg-primary">0.25</span>
+                        </label>
+                        <input type="range" class="form-range" id="confidenceSlider" 
+                               min="0.1" max="0.9" step="0.05" value="0.25">
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <button id="resetBtn" class="btn btn-outline-secondary" style="display: none;">
+                            <i class="fas fa-refresh"></i> Yeni Analiz
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upload Section -->
+            <div id="uploadSection" class="upload-section">
+                <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                    <h3>Fiş veya Fatura Yükleyin</h3>
+                    <p class="text-muted">Dosyanızı buraya sürükleyip bırakın veya tıklayarak seçin</p>
+                    <small class="text-muted">
+                        Desteklenen formatlar: JPG, PNG, JPEG, GIF, BMP, TIFF (Maks. 16MB)
+                    </small>
+                </div>
+                <input type="file" id="fileInput" accept="image/*" style="display: none;">
+            </div>
+
+            <!-- Preview Section -->
+            <div id="previewSection" class="preview-section">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4><i class="fas fa-image"></i> Yüklenen Görüntü</h4>
+                        <img id="imagePreview" class="image-preview" alt="Yüklenen görüntü">
+                    </div>
+                    <div class="col-md-6">
+                        <h4><i class="fas fa-crosshairs"></i> Tespit Edilen Alanlar</h4>
+                        <img id="annotatedImage" class="annotated-image" alt="Tespit edilmiş alanlar">
+                    </div>
+                </div>
+                <div class="text-center mt-4">
+                    <button id="analyzeBtn" class="btn btn-custom btn-lg">
+                        <i class="fas fa-search"></i> Analiz Et
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultsSection" class="results-section">
+                <!-- Summary Card -->
+                <div id="summaryCard" class="summary-card">
+                    <h4 class="mb-4"><i class="fas fa-chart-line"></i> Analiz Özeti</h4>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="summary-stat">
+                                <span id="totalDetections" class="number">0</span>
+                                <span class="label">Tespit Edilen Alan</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="summary-stat">
+                                <span id="avgConfidence" class="number">0%</span>
+                                <span class="label">Ortalama Güven</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="summary-stat">
+                                <span id="detectedFields" class="number">-</span>
+                                <span class="label">Bulunan Bilgiler</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detections -->
+                <h4 class="mb-4"><i class="fas fa-list"></i> Çıkarılan Bilgiler</h4>
+                <div id="detectionsContainer">
+                    <!-- Detections will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Global variables
+        let selectedFile = null;
+        let currentResults = null;
+
+        // DOM elements
+        const fileInput = document.getElementById('fileInput');
+        const uploadSection = document.getElementById('uploadSection');
+        const previewSection = document.getElementById('previewSection');
+        const resultsSection = document.getElementById('resultsSection');
+        const imagePreview = document.getElementById('imagePreview');
+        const annotatedImage = document.getElementById('annotatedImage');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const confidenceSlider = document.getElementById('confidenceSlider');
+        const confidenceValue = document.getElementById('confidenceValue');
+
+        // Event listeners
+        fileInput.addEventListener('change', handleFileSelect);
+        analyzeBtn.addEventListener('click', analyzeImage);
+        resetBtn.addEventListener('click', resetApp);
+        confidenceSlider.addEventListener('input', updateConfidenceValue);
+
+        // Drag and drop
+        const uploadArea = document.querySelector('.upload-area');
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('drag-over');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        function updateConfidenceValue() {
+            confidenceValue.textContent = confidenceSlider.value;
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+
+        function handleFile(file) {
+            // Validate file type
+            const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp', 'image/tiff'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Desteklenmeyen dosya formatı! Lütfen bir görüntü dosyası seçin.');
+                return;
+            }
+
+            // Validate file size (16MB)
+            if (file.size > 16 * 1024 * 1024) {
+                alert('Dosya boyutu çok büyük! Maksimum 16MB boyutunda dosya yükleyebilirsiniz.');
+                return;
+            }
+
+            selectedFile = file;
+            
+            // Show preview
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+                showPreviewSection();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function showPreviewSection() {
+            uploadSection.style.display = 'none';
+            previewSection.style.display = 'block';
+            resultsSection.style.display = 'none';
+            resetBtn.style.display = 'inline-block';
+        }
+
+        function analyzeImage() {
+            if (!selectedFile) {
+                alert('Lütfen önce bir dosya seçin!');
+                return;
+            }
+
+            // Show loading
+            showLoading();
+
+            // Prepare form data
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            formData.append('confidence', confidenceSlider.value);
+
+            // Send request
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideLoading();
+                if (data.success) {
+                    currentResults = data;
+                    showResults(data);
+                } else {
+                    alert('Hata: ' + (data.error || 'Bilinmeyen hata'));
+                }
+            })
+            .catch(error => {
+                hideLoading();
+                console.error('Error:', error);
+                alert('Analiz sırasında bir hata oluştu: ' + error.message);
+            });
+        }
+
+        function showResults(data) {
+            // Show annotated image
+            annotatedImage.src = 'data:image/jpeg;base64,' + data.annotated_image;
+            
+            // Update summary
+            document.getElementById('totalDetections').textContent = data.summary.total_detections;
+            document.getElementById('avgConfidence').textContent = Math.round(data.summary.avg_confidence * 100) + '%';
+            document.getElementById('detectedFields').textContent = data.summary.detected_fields.slice(0, 3).join(', ') + 
+                (data.summary.detected_fields.length > 3 ? '...' : '');
+
+            // Clear previous detections
+            const container = document.getElementById('detectionsContainer');
+            container.innerHTML = '';
+
+            // Add detections
+            data.detections.forEach((detection, index) => {
+                const card = createDetectionCard(detection, index + 1);
+                container.appendChild(card);
+            });
+
+            // Show results section
+            resultsSection.style.display = 'block';
+            
+            // Scroll to results
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function createDetectionCard(detection, index) {
+            const card = document.createElement('div');
+            card.className = 'detection-card';
+            
+            const confidenceColor = detection.confidence > 0.7 ? 'success' : 
+                                   detection.confidence > 0.5 ? 'warning' : 'danger';
+            
+            card.innerHTML = `
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="field-name">
+                        <i class="fas fa-tag"></i> ${index}. ${detection.class_name_tr}
+                    </div>
+                    <span class="confidence-badge bg-${confidenceColor}">
+                        %${Math.round(detection.confidence * 100)}
+                    </span>
+                </div>
+                <div class="field-value">
+                    ${detection.extracted_text || '<em class="text-muted">Metin çıkarılamadı</em>'}
+                </div>
+                <small class="text-muted mt-2 d-block">
+                    <i class="fas fa-crosshairs"></i> 
+                    Konum: (${Math.round(detection.coordinates[0])}, ${Math.round(detection.coordinates[1])}) - 
+                    (${Math.round(detection.coordinates[2])}, ${Math.round(detection.coordinates[3])})
+                </small>
+            `;
+            
+            return card;
+        }
+
+        function resetApp() {
+            selectedFile = null;
+            currentResults = null;
+            
+            uploadSection.style.display = 'block';
+            previewSection.style.display = 'none';
+            resultsSection.style.display = 'none';
+            resetBtn.style.display = 'none';
+            
+            fileInput.value = '';
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showLoading() {
+            loadingOverlay.style.display = 'flex';
+        }
+
+        function hideLoading() {
+            loadingOverlay.style.display = 'none';
+        }
+
+        // Initialize
+        updateConfidenceValue();
+    </script>
+</body>
+</html> 
